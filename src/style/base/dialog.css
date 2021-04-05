@@ -1,0 +1,108 @@
+﻿.dialog {
+}
+
+    .dialog .model {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #000000;
+        opacity: .4;
+    }
+
+    .dialog .dialog-content {
+        padding: 24px;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        width: 650px;
+        border-radius: 4px;
+        background-color: #ffffff;
+        padding-bottom: 60px;
+    }
+
+    .dialog .dialog-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .dialog .dialog-close-button {
+        text-align: center;
+        line-height: 40px;
+        font-size: 20px;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 40px;
+        height: 40px;
+        border-radius: 0 4px 0 4px;
+    }
+
+        .dialog .dialog-close-button:hover {
+            background-color: #bbb;
+            cursor: pointer;
+        }
+
+.dialog-hide {
+    display: none;
+}
+
+
+.dialog .dialog-footer{
+    position: absolute;
+    display: flex;
+    align-items: center;
+    bottom: 0;
+    background-color: #e5e5e5;
+    height: 56px;
+    border-radius: 0 0 4px 4px;
+    left: 0;
+    right: 0;
+}
+
+.m-row{
+    display: flex;
+}
+.photo{
+  margin-top: 30px;
+  text-align: center;
+}
+img{
+  border: 1px solid #bbbbbb;
+  border-radius: 100px 100px;
+  width: 150px;
+  height: 150px;
+}
+.text{
+  text-align: center;
+}
+.m-colss{
+  display: flex;
+}
+.m-colss >div{
+  width: 219px;
+}
+
+.m-col{
+  margin: 0 6px 0 6px;
+}
+.noicap{
+  margin: 0 6px 0 6px;
+  width: 219px;
+}
+input{
+  margin-bottom: 8px;
+}
+select{
+  margin-bottom: 8px;
+
+}
+.btn-cancer{
+  margin-left: auto;
+}
+.btn-default{
+  margin-right: 34px;
+}
+
