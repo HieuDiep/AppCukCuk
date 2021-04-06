@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div id="header">Header</div>
+        <div id="header">NHÀ HÀNG PHƯƠNG ĐÔNG</div>
     </div>
 </template>
 <style scoped>

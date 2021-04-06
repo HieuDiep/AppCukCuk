@@ -12,12 +12,13 @@
       <input
         type="text"
         class="input-search"
-        style="width: 220px"
+        style="width: 300px"
         placeholder="Tìm kiếm theo mã, tên khách hàng"
       />
-      <combobox :dropdownName = dropdownName :listItem = departments />
+      <combobox class="combobox" :listItem = departments @filters="filterDepartment" />
+       <combobox class="combobox" :listItem = positions @filters="filterPosition"/>
       <button class="btn-refresh" @click="loadData"></button>
-      <button class="btn-delete" @click="deleteEmployee(employeeIdSelect)"></button>
+      <button class="btn-delete" @click="comfirmDel=true"></button>
     </div>
     <div class="grid">
       <table id="tblListemployee" class="table" width="100%" border="0">
@@ -57,13 +58,27 @@
         </tbody>
       </table>
     </div>
-    <pagination
-      :total-pages="11"
-      :total="113"
-      :per-page="10"
-      :current-page="currentPage"
-      @pagechanged="onPageChange"
-    />
+
+      <div class="paging" v-if="isShowDialogDetail==false">
+      <div class="paging-bar">
+        <div class="paging-record-info">
+          Hiển thị <b data-v-a72348a4="">1-10/1000</b> nhân viên
+        </div>
+       
+        <div data-v-a72348a4="" class="paging-record-option">
+          <b data-v-a72348a4="">10</b> nhân viên/trang
+        </div>
+      </div>
+    </div>
+    <div v-if="comfirmDel">
+      //form xác nhận xóa
+    <confirmDelete 
+      :confContent=contentDel 
+      :confTitle=confTitle 
+      @hideComf="hideComf" 
+      @del="deleteEmployee(employeeIdSelect)">
+    </confirmDelete>
+    </div>
     <employeeDetail
       :isShow="isShowDialogDetail"
       :employee="selectedemployee"
@@ -75,17 +90,20 @@
 </template>
 <script>
 import employeeDetail from "./employeeDetail.vue";
-import Pagination from "../../components/pagination.vue"
+// import Pagination from "../../components/pagination.vue"
 import axios from "axios";
 import Combobox from '../../components/combobox.vue';
+import confirmDelete from '../../components/form/confirmDelete.vue';
 export default {
   components: {
     employeeDetail,
-    Pagination,
-    Combobox
+    Combobox,
+    confirmDelete,
   },
   data() {
     return {
+      selectedItem:"",
+      comfirmDel:false,
       dialogFormMode: "add",
       isShowDialogDetail: false,
       selectedemployee: {},
@@ -93,12 +111,26 @@ export default {
       employeeIdSelect:null,
       isActive:false,
       hidePaging:true,
+      isDelete:false,
       currentPage: 1,
-      dropdownName: 'Tất cả phòng ban',
       departments: [
+        "Tất cả các phòng",
         "Phòng nhân sự",
-        "Phòng công nghệ"
-      ]
+        "Phòng công nghệ",
+        "Phòng Marketting",
+        "Phòng đào tạo",
+        "Phòng Nhân sự",
+        "Phòng Công nghệ",
+
+      ],
+      positions:[
+        "Tất cả các vị trí",
+        "Giám đốc",
+        "Nhân viên Marketting",
+        "Thu ngân",
+      ],
+      contentDel: "Bạn có chắc muốn xóa bản ghi dữ liệu ?",
+      confTitle:"Xóa bản ghi"
     };
   },
   created() {
@@ -107,7 +139,6 @@ export default {
     axios
       .get("http://api.manhnv.net/v1/employees")
       .then((res) => {
-        console.log(res.data);
         this.employees = res.data;
       })
       .catch((err) => {
@@ -115,8 +146,32 @@ export default {
       });
     
   },
-  props: [],
+  props: [],  
+  computed:{
+    // filterEmp(mes){
+    //   console.log("ok")
+    //   return this.employees.filter(employee=>employee.departmentsName==mes)
+    // }
+  },
   methods: {
+    //loc phong ban
+     filterDepartment(mes){
+       if(mes=="Tất cả các phòng"){
+         this.loadData();
+       }
+        this.employees = this.employees.filter(employee=> employee.DepartmentName==mes)
+        console.log(this.employees)
+      return this.employees;
+    },
+    //loc vi tri
+    filterPosition(mes){
+       if(mes=="Tất cả các vị trí"){
+         this.loadData();
+       }
+        this.employees = this.employees.filter(employee=> employee.PositionName==mes)
+        console.log(this.employees)
+      return this.employees;
+    },
       autoFocus(){
         this.$refs.employeeCode.$el.focus()
       },
@@ -139,15 +194,16 @@ export default {
         .then(this.loadData)
         .catch((res) => {
           console.log(res);
-        });
+        })
+        this.comfirmDel=false;
       },
       pagingEmployees(currentPage = 1) {
         this.currentPage = currentPage;
         return this.employees = this.employees.slice(currentPage - 1 * 10, currentPage * 10);
       },
+
     /**--------------------------------------
      * Hiển thị Dialog của cha và ẩn paging
-     * CreatedBy: NVMANH (31/03/2021)
      */
     btnAddOnClick() {
       this.selectedemployee = {};
@@ -163,7 +219,10 @@ export default {
       this.loadData();
       this.dialogFormMode
     },
-
+    //hiện form delete
+    hideComf(){
+      this.comfirmDel=false;
+    },
     changeList(employeeId){
       this.employeeIdSelect = employeeId;
     },
@@ -186,7 +245,7 @@ export default {
     },
     
   },
-  
+
   watch: {},
 };
 </script>
@@ -263,5 +322,8 @@ select {
 .dialog .dialog-footer button{
     position: absolute;
     right: 24px;
+}
+.combobox{
+  margin: 0 10px 0 10px;
 }
 </style>

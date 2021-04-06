@@ -9,18 +9,10 @@
         <div class="navbar-icon icon-dashboard"></div>
         <div class="navbar-text">Tổng quan</div>
       </router-link>
-      <!-- <a class="navbar-item">
-        <div class="navbar-icon icon-report"></div>
-        <div class="navbar-text">Báo cáo</div>
-      </a> -->
       <router-link class="navbar-item" to="/report">
         <div class="navbar-icon icon-report"></div>
         <div class="navbar-text">Báo cáo</div>
       </router-link>
-      <!-- <a class="navbar-item" href="#">
-        <div class="navbar-icon icon-dic-employee"></div>
-        <div class="navbar-text">Danh sách khách hàng</div>
-      </a> -->
       <router-link class="navbar-item" to="/customer">
         <div class="navbar-icon icon-dic-employee"></div>
         <div class="navbar-text">Danh sách khách hàng</div>

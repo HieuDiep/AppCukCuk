@@ -10,7 +10,6 @@
         :disabled="isInFirstPage"
         aria-label="Go to first page"
       >
-        First
       </button>
     </li>
 
@@ -159,6 +158,7 @@ export default {
 
 .pagination {
   list-style-type: none;
+  position: absolute;
 }
 
 .pagination-item {

@@ -68,7 +68,7 @@
                   <label>Mã số thuế cá nhân</label>
                   <input  type="text" v-model="employee.PersonalTaxCode" />
                   <label>Ngày gia nhập công ty</label>
-                  <input type="date" v-model="employee.JoinDate" />
+                  <input type="date" v-model="employee.joinDate" />
                 </div>
                 <div class="m-col">
                   <label>Phòng ban</label>
@@ -76,10 +76,10 @@
                   <label>Mức lương cơ bản</label>
                   <input type="text" v-model="employee.Salary" />
                   <label>Tình trạng công việc</label>
-                  <select name="" id="" v-model="employee.WorkStatusName">
-                    <option value=1>Đang làm việc</option>
-                    <option value=2>Đang xin nghỉ phép</option>
-                    <option value=3>Đã nghỉ</option>
+                  <select name="" id="" v-model="employee.workStatus">
+                    <option value=0>Đang làm việc</option>
+                    <option value=1>Đang xin nghỉ phép</option>
+                    <option value=2>Đã nghỉ</option>
                   </select>
                 </div>
               </div>
@@ -125,7 +125,8 @@ export default {
             this.$emit("hideDialog");
           })
           .catch((res) => {
-            console.log(res);
+            alert(res);
+            //this.$emit("hideDialog");
           });
       } else {
         axios

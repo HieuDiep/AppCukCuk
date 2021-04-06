@@ -1,18 +1,25 @@
 <template>
     <div class="">
-        <select id="" name="test"  @change="onChange($event)">
-        <option value="" hidden> {{dropdownName}} </option>
-        <option :value="item" v-for="item in listItem" :key="item" > {{item}} </option>
-        </select>   
+        <select @change="onChange($event)">
+        <option :value="item" v-for="item in listItem" :key="item" >{{item}}</option>
+        </select>
     </div>
 </template>
 
 <script>
 export default {
-    props: ['dropdownName','listItem'],
+    props: ['listItem'],
+    data(){
+        return{
+            selectedItem:"",
+        }
+    },
     methods:{
         onChange(event) {
-            console.log(event.target.value)
+            this.selectedItem="";
+            this.selectedItem = event.target.value;
+            this.$emit("filters",this.selectedItem);
+            this.selectedItem="";
         }
     },
 }
