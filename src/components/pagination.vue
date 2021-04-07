@@ -9,25 +9,29 @@
         @click="onClickFirstPage"
         :disabled="isInFirstPage"
         aria-label="Go to first page"
+        class="iconbuttonpage"       
       >
+      <img src="../assets/icon/btn-firstpage.svg" alt="" class="iconpage">
       </button>
     </li>
 
     <li
-      class="pagination-item"
+      class="pagination-item "
     >
       <button 
         type="button" 
         @click="onClickPreviousPage"
         :disabled="isInFirstPage"
         aria-label="Go to previous page"
+        class="iconbuttonpage"
       >
-        Previous
+      <img src="../assets/icon/btn-prev-page.svg" alt="" class="iconpage">
       </button>
     </li>
 
     <li v-for="page in pages" :key="page" class="pagination-item">
       <button 
+        class="btn-pagenumber btn-pagenumber-selected"
         type="button" 
         @click="onClickPage(page.name)"
         :disabled="page.isDisabled"
@@ -44,9 +48,11 @@
         @click="onClickNextPage"
         :disabled="isInLastPage"
         aria-label="Go to next page"
+        class="iconbuttonpage" 
+        
       >
-        Next
-      </button>
+      <img src="../assets/icon/btn-next-page.svg" alt="" class="iconpage">
+    </button>
     </li>
 
     <li class="pagination-item">
@@ -55,8 +61,9 @@
         @click="onClickLastPage"
         :disabled="isInLastPage"
         aria-label="Go to last page"
+        class="iconbuttonpage" 
       >
-        Last
+      <img src="../assets/icon/btn-lastpage.svg" alt="" class="iconpage"> 
       </button>
     </li>
   </ul>
@@ -147,26 +154,14 @@ export default {
 </script>
 
 <style scoped>
-#app {
-  font-family: Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-
-.pagination {
-  list-style-type: none;
-  position: absolute;
-}
-
+@import url("../style/base/button.css");
 .pagination-item {
-  display: inline-block;
+  display: inline;
 }
 
 .active {
   background-color: #4AAE9B;
   color: #ffffff;
 }
+
 </style>

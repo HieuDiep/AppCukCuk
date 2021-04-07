@@ -21,20 +21,21 @@
               </div>
             </div>
             <div class="m-cols">
+              <div class="errorclass" v-if="errormessage!=null">{{errormessage}}</div> 
               <p>A. THÔNG TIN CHUNG</p>
               <div class="margin-bottom"></div>
               <div class="m-colss">
                 <div class="m-col">
                   <label>Mã nhân viên</label>
-                  <input type="text" v-model="employee.EmployeeCode"  ref="employeeCode" />
+                  <input type="text" v-model="employee.EmployeeCode"  ref="employeeCode" @focus="errorMessage=''"/>
                   <label>Ngày sinh</label>
-                  <input type="date" v-model="employee.DateOfBirth" />
+                  <input type="date" v-model="employee.DateOfBirth" @focus="errorMessage=''"/>
                   <label>Số CMND/Căn cước(<span style="color:red">*</span>)</label>
-                  <input type="text" v-model="employee.IdentityNumber" />
+                  <input type="text" v-model="employee.IdentityNumber" @focus="errorMessage=''"/>
                 </div>
                 <div class="m-col">
                   <label>Họ và tên(<span style="color:red">*</span>)</label>
-                  <input type="text" v-model="employee.FullName" />
+                  <input type="text" v-model="employee.FullName" @focus="errorMessage=''"/>
                   <label>Giới tính</label>
                   <select v-model="employee.Gender">
                     <option value="1">Nam</option>
@@ -42,7 +43,7 @@
                     <option value="2">Khác</option>
                   </select>
                   <label>Ngày cấp</label>
-                  <input type="date" v-model="employee.IdentityDate" />
+                  <input type="date" v-model="employee.IdentityDate" @focus="errorMessage=''"/>
                 </div>
               </div>
               <div class="noicap">
@@ -52,7 +53,7 @@
               <div class="m-colss">
                 <div class="m-col">
                   <label>Email(<span style="color:red">*</span>)</label>
-                  <input id="txtFullName" type="text" v-model="employee.Email" />
+                  <input id="txtFullName" type="text" v-model="employee.Email" @focus="errorMessage=''"  />
                 </div>
                 <div class="m-col">
                   <label>Số điện thoại(<span style="color:red">*</span>)</label>
@@ -64,7 +65,7 @@
               <div class="m-colss">
                 <div class="m-col">
                   <label>Vị trí</label>
-                  <input  type="text" v-model="employee.PositionName" />
+                  <input  type="text" v-model="employee.PositionCode" />
                   <label>Mã số thuế cá nhân</label>
                   <input  type="text" v-model="employee.PersonalTaxCode" />
                   <label>Ngày gia nhập công ty</label>
@@ -72,7 +73,7 @@
                 </div>
                 <div class="m-col">
                   <label>Phòng ban</label>
-                  <input  type="text" v-model="employee.DepartmentName" />
+                  <input  type="text" v-model="employee.DepartmentCode" />
                   <label>Mức lương cơ bản</label>
                   <input type="text" v-model="employee.Salary" />
                   <label>Tình trạng công việc</label>
@@ -100,6 +101,7 @@
 </template>
 <script>
 import axios from "axios";
+// import {isEmailError} from "../../checkinput"
 export default {
   props: {
     isShow: { type: Boolean, default: false },
@@ -107,27 +109,48 @@ export default {
     formMode: { type: String, default: "add" },
   },
 
-  methods: {
-    /**--------------------------------------
-     * Gọi đến phương thức ẩn Dialog của cha
-     * 
-     */
+  data(){
+    return {
+      errormessage:""
+    }
+  },
+  created:{
     
+  },
+  methods: {
+    isEmailError(n){
+      // console.log(typeof n)
+      for (var i of n) {
+        if (i === "@") 
+          return false;
+      }
+      return true;
+    },
     btnCloseOnClick() {
+      this.errormessage="";
       this.$emit("hideDialog");
     },
-    btnSaveOnClick() {
+    btnSaveOnClick() {      
       if (this.formMode == "add") {
-        axios
-          .post("http://api.manhnv.net/v1/employees", this.employee)
+        console.log("addd")
+        if(this.employee.Email != null && this.employee.EmployeeCode != null && this.employee.FullName != null && this.employee.IdentityNumber != null && this.employee.PhoneNumber != null){
+          this.employee.EmployeeCode = "NV-" + this.employee.EmployeeCode + 1;
+          axios
+          .post("http://api.manhnv.net/v1/employees/", this.employee)
           .then((res) => {
             console.log(res);
             this.$emit("hideDialog");
+            this.employee.Email= null;
+            alert("Thêm mới thành công");
           })
           .catch((res) => {
-            alert(res);
+            alert("Add "+res);
             //this.$emit("hideDialog");
           });
+        } else{
+           console.log("loi r" + this.employee)
+          this.errormessage="Vui lòng nhập dữ liệu";
+        }
       } else {
         axios
           .put(
@@ -139,10 +162,12 @@ export default {
             this.$emit("hideDialog");
           })
           .catch((res) => {
-            console.log(res);
+            alert("Edit "+res);
           });
       }
     },
+
+    
   },
 };
 </script>
@@ -154,6 +179,11 @@ export default {
   width: 80px;
   background-color: green;
 }
-
+.errorclass{
+    background-color: rgb(239 239 239);
+    text-align: center;
+    font-size: 17px;
+    color: red;
+}
 
 </style>

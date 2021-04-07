@@ -14,9 +14,11 @@
         class="input-search"
         style="width: 300px"
         placeholder="Tìm kiếm theo mã, tên khách hàng"
+        v-model="inputSearch"
+        v-on:keyup.enter="searchData(inputSearch)"
       />
       <combobox class="combobox" :listItem = departments @filters="filterDepartment" />
-       <combobox class="combobox" :listItem = positions @filters="filterPosition"/>
+      <combobox class="combobox" :listItem = positions @filters="filterPosition"/>
       <button class="btn-refresh" @click="loadData"></button>
       <button class="btn-delete" @click="comfirmDel=true"></button>
     </div>
@@ -41,12 +43,12 @@
             v-for="employee in employees"
             :key="employee.EmployeeId"
             @dblclick="trOnDblClick(employee.EmployeeId)"
-            @click="changeList(employee.EmployeeId)"
+            @click="changeList(employee.EmployeeId,employee.EmployeeCode)"
             :class="{'selected':employee.EmployeeId===employeeIdSelect}"
           >
             <td>{{ employee.EmployeeCode}}</td>
             <td>{{ employee.FullName }}</td>
-            <td>{{ employee.Gender }}</td>
+            <td>{{ employee.GenderName }}</td>
             <td>{{ employee.DateOfBirth }}</td>
             <td>{{ employee.PhoneNumber }}</td>
             <td>{{ employee.Email }}</td>
@@ -64,7 +66,13 @@
         <div class="paging-record-info">
           Hiển thị <b data-v-a72348a4="">1-10/1000</b> nhân viên
         </div>
-       
+       <pagination
+          :total-pages="11"
+          :total="113"
+          :per-page="10"
+          :current-page="currentPage"
+          @pagechanged="onPageChange"
+        />
         <div data-v-a72348a4="" class="paging-record-option">
           <b data-v-a72348a4="">10</b> nhân viên/trang
         </div>
@@ -72,12 +80,12 @@
     </div>
     <div v-if="comfirmDel">
       //form xác nhận xóa
-    <confirmDelete 
-      :confContent=contentDel 
-      :confTitle=confTitle 
-      @hideComf="hideComf" 
-      @del="deleteEmployee(employeeIdSelect)">
-    </confirmDelete>
+      <confirmDelete 
+        :confContent=contentDel 
+        :confTitle=confTitle 
+        @hideComf="hideComf" 
+        @del="deleteEmployee(employeeIdSelect)">
+      </confirmDelete>
     </div>
     <employeeDetail
       :isShow="isShowDialogDetail"
@@ -90,12 +98,13 @@
 </template>
 <script>
 import employeeDetail from "./employeeDetail.vue";
-// import Pagination from "../../components/pagination.vue"
+import Pagination from "../../components/pagination.vue"
 import axios from "axios";
 import Combobox from '../../components/combobox.vue';
 import confirmDelete from '../../components/form/confirmDelete.vue';
 export default {
   components: {
+    Pagination,
     employeeDetail,
     Combobox,
     confirmDelete,
@@ -109,14 +118,14 @@ export default {
       selectedemployee: {},
       employees: [],
       employeeIdSelect:null,
+      employeeCodeSelect:"này",
       isActive:false,
       hidePaging:true,
       isDelete:false,
       currentPage: 1,
+      inputSearch:null,
       departments: [
         "Tất cả các phòng",
-        "Phòng nhân sự",
-        "Phòng công nghệ",
         "Phòng Marketting",
         "Phòng đào tạo",
         "Phòng Nhân sự",
@@ -129,7 +138,7 @@ export default {
         "Nhân viên Marketting",
         "Thu ngân",
       ],
-      contentDel: "Bạn có chắc muốn xóa bản ghi dữ liệu ?",
+      contentDel: "Bạn có chắc chắn muốn xóa nhân viên không?",
       confTitle:"Xóa bản ghi"
     };
   },
@@ -146,14 +155,14 @@ export default {
       });
     
   },
-  props: [],  
-  computed:{
-    // filterEmp(mes){
-    //   console.log("ok")
-    //   return this.employees.filter(employee=>employee.departmentsName==mes)
-    // }
-  },
-  methods: {
+   methods: {
+     searchData(key){
+      //  console.log("OK"+key)
+      axios.get("http://api.manhnv.net/v1/employees/Filter?fullname="+key)
+      .then((res)=>{
+        this.employees = res.data;
+      })
+     },
     //loc phong ban
      filterDepartment(mes){
        if(mes=="Tất cả các phòng"){
@@ -172,35 +181,37 @@ export default {
         console.log(this.employees)
       return this.employees;
     },
-      autoFocus(){
-        this.$refs.employeeCode.$el.focus()
-      },
-      onPageChange(page) {
-        console.log(page)
-        this.currentPage = page;
-      },
-      loadData(){
-        axios
-        .get("http://api.manhnv.net/v1/employees")
-        .then((res) => {
-          this.employees = res.data;
-        })
-        .catch((res) => {
-          console.log(res);
-        });
-      },
-      deleteEmployee(employeeId){
-        axios.delete("http://api.manhnv.net/v1/employees/" + employeeId )
-        .then(this.loadData)
-        .catch((res) => {
-          console.log(res);
-        })
-        this.comfirmDel=false;
-      },
-      pagingEmployees(currentPage = 1) {
-        this.currentPage = currentPage;
-        return this.employees = this.employees.slice(currentPage - 1 * 10, currentPage * 10);
-      },
+    // chon page  
+    onPageChange(page) {
+      axios.get("http://api.manhnv.net/v1/Employees/Filter?pageNumber="+page)
+      .then((res)=>{
+        this.employees =res.data;
+      })
+      .catch()
+      this.currentPage = page;
+    },
+    loadData(){
+      axios
+      .get("http://api.manhnv.net/v1/employees")
+      .then((res) => {
+        this.employees = res.data;
+      })
+      .catch((res) => {
+        console.log(res);
+      });
+    },
+    deleteEmployee(employeeId){
+      axios.delete("http://api.manhnv.net/v1/employees/" + employeeId )
+      .then(this.loadData)
+      .catch((res) => {
+        console.log(res);
+      })
+      this.comfirmDel=false;
+    },
+    pagingEmployees(currentPage) {
+      this.currentPage = currentPage;
+      return this.employees = this.employees.slice(currentPage - 1 * 10, currentPage * 10);
+    },
 
     /**--------------------------------------
      * Hiển thị Dialog của cha và ẩn paging
@@ -218,13 +229,16 @@ export default {
       this.hidePaging=true;
       this.loadData();
       this.dialogFormMode
+      this.$refs.employeeCode.focus()
+
     },
     //hiện form delete
     hideComf(){
       this.comfirmDel=false;
     },
-    changeList(employeeId){
+    changeList(employeeId,employeeCode){
       this.employeeIdSelect = employeeId;
+      this.employeeCodeSelect = employeeCode;
     },
     trOnDblClick(employeeId) {
       // Lấy id của bản ghi được chọn

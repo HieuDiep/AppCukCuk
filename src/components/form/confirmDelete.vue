@@ -4,7 +4,10 @@
             <div class="x"  @click="closeConf()">&#x2715;</div>
             <div class="confTitle">{{confTitle}}</div>
             <br>
-            <div class="confContentDetail">{{confContent}}</div>
+            <div class="confContentDetail">
+                <span class="alertDel"><i class="fas fa-exclamation-triangle "></i></span>
+                {{confContent}}
+            </div>
         </div>
 
         <div class="confbutton">
@@ -78,5 +81,9 @@ export default {
    display: flex;
     padding: 7px;  
 }
-   
+.alertDel{
+    color: red;
+    font-size: 24px;
+    margin: 0 10px;
+}
 </style>
